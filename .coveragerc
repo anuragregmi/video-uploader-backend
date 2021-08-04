@@ -1,0 +1,10 @@
+[run]
+branch = True
+omit = *migrations*,
+       *urls*,
+       *test*,
+       *admin*,
+       ./manage.py,
+       ./video_uploader/config/*,
+       ./video_uploader/wsgi.py,
+       *__init__*
