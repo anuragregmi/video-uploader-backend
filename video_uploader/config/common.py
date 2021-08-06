@@ -25,6 +25,7 @@ class Common(Configuration):
 
         # Your apps
         'video_uploader.users',
+        'video_uploader.video',
 
     )
 
@@ -64,6 +65,7 @@ class Common(Configuration):
     USE_L10N = True
     USE_TZ = True
     LOGIN_REDIRECT_URL = '/'
+    APPEND_SLASH = True
 
     # Static files (CSS, JavaScript, Images)
     # https://docs.djangoproject.com/en/2.0/howto/static-files/
