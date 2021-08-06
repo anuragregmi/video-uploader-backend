@@ -2,7 +2,7 @@ import os
 from os.path import join
 from distutils.util import strtobool
 import dj_database_url
-from configurations import Configuration
+from configurations import Configuration, values
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 class Common(Configuration):
@@ -197,6 +197,8 @@ class Common(Configuration):
             'rest_framework.authentication.TokenAuthentication',
         )
     }
+
+    INPUT_BUCKET_NAME = values.Value(defaule="myinputbucket", environ_prefix="S3")
 
     @property
     def DATABASES(self):
