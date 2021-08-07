@@ -11,13 +11,14 @@ class Video(models.Model):
     outputs = models.JSONField(null=True, blank=True)
     thumbnail = models.CharField(max_length=255, blank=True)
     transcoder_job_id = models.CharField(max_length=255, blank=True)
+    trancode_status = models.CharField(max_length=25, default="Pending")
 
     def __str__(self):
         return self.raw_file.name
 
-    def save(self, **kwargs) -> None:
+    def save(self, *args, **kwargs) -> None:
         created = not self.id
-        super().save(**kwargs)
+        super().save(*args, **kwargs)
 
         if created:
             async_task('video_uploader.video.tasks.post_save_video', self)

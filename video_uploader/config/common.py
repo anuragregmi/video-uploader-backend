@@ -203,6 +203,7 @@ class Common(Configuration):
     }
 
     INPUT_BUCKET_NAME = values.Value(default="myinputbucket", environ_prefix="S3")
+    OUTPUT_BUCKET_NAME = values.Value(default="myoutputbucket", environ_prefix="S3")
     WATERMARK_FILE_NAME = values.Value(default="level_up_logo.png", environ_prefix="S3")
     PIPELINE_ID = values.Value(default="", environ_prefix="TRANSCODE")
 
