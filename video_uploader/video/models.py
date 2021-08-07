@@ -1,24 +1,23 @@
-from video_uploader.video.utils import upload_file
 from django.db import models
 from django.core.validators import FileExtensionValidator
-from django.conf import settings
+
+from django_q.tasks import async_task
 
 class Video(models.Model):
-    name = models.CharField(max_length=255, unique=True)
-    raw_file = models.FileField(validators=[FileExtensionValidator(allowed_extensions=["mp4", "mov", "wmv"])])
+    raw_file = models.FileField(validators=[FileExtensionValidator(
+        allowed_extensions=["mp4", "mov", "wmv", "webm"])])
     uploaded_at = models.DateTimeField(auto_now_add=True)
-    converted_path = models.CharField(max_length=255, blank=True)
+
+    outputs = models.JSONField(null=True, blank=True)
+    thumbnail = models.CharField(max_length=255, blank=True)
+    transcoder_job_id = models.CharField(max_length=255, blank=True)
 
     def __str__(self):
-        return self.name
+        return self.raw_file.name
 
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
+    def save(self, **kwargs) -> None:
+        created = not self.id
+        super().save(**kwargs)
 
-        import ipdb; ipdb.set_trace()
-
-        # TODO: @anurag move this to background task
-        if upload_file(self.raw_file, "input-videos-anurag", self.raw_file.name):
-            print("uploaded successfully")
-        else:
-            print("Upload failed")
+        if created:
+            async_task('video_uploader.video.tasks.post_save_video', self)

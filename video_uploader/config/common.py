@@ -22,6 +22,8 @@ class Common(Configuration):
         'rest_framework',            # utilities for rest apis
         'rest_framework.authtoken',  # token authentication
         'django_filters',            # for filtering rest endpoints
+        'corsheaders',               # CORS support
+        'django_q',
 
         # Your apps
         'video_uploader.users',
@@ -33,12 +35,15 @@ class Common(Configuration):
     MIDDLEWARE = (
         'django.middleware.security.SecurityMiddleware',
         'django.contrib.sessions.middleware.SessionMiddleware',
+        'corsheaders.middleware.CorsMiddleware',
         'django.middleware.common.CommonMiddleware',
         'django.middleware.csrf.CsrfViewMiddleware',
         'django.contrib.auth.middleware.AuthenticationMiddleware',
         'django.contrib.messages.middleware.MessageMiddleware',
         'django.middleware.clickjacking.XFrameOptionsMiddleware',
     )
+
+    CORS_ALLOW_ALL_ORIGINS = True
 
     ALLOWED_HOSTS = ["*"]
     ROOT_URLCONF = 'video_uploader.urls'
@@ -54,9 +59,8 @@ class Common(Configuration):
 
     # Postgres
 
-
     # General
-    APPEND_SLASH = False
+    APPEND_SLASH = True
     TIME_ZONE = 'UTC'
     LANGUAGE_CODE = 'en-us'
     # If you set this to False, Django will make some optimizations so as not
@@ -198,7 +202,26 @@ class Common(Configuration):
         )
     }
 
-    INPUT_BUCKET_NAME = values.Value(defaule="myinputbucket", environ_prefix="S3")
+    INPUT_BUCKET_NAME = values.Value(default="myinputbucket", environ_prefix="S3")
+    WATERMARK_FILE_NAME = values.Value(default="level_up_logo.png", environ_prefix="S3")
+    PIPELINE_ID = values.Value(default="", environ_prefix="TRANSCODE")
+
+    Q_CLUSTER = {
+        'name': 'myproject',
+        'workers': 8,
+        'recycle': 500,
+        'timeout': 60*60,
+        'retry': 60*60 + 5,
+        'compress': True,
+        'save_limit': 250,
+        'queue_limit': 500,
+        'cpu_affinity': 1,
+        'label': 'Django Q',
+        'redis': {
+            'host': '127.0.0.1',
+            'port': 6379,
+            'db': 0, }
+    }
 
     @property
     def DATABASES(self):
