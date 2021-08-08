@@ -36,13 +36,13 @@ def watch_transcode_job(video: Video) -> None:
         video: Video Instance
     """
 
-    if not video.job_id:
-        raise AssertionError("Video.job_id not set")
+    if not video.transcoder_job_id:
+        raise AssertionError("Video.transcoder_job_id not set")
 
-    video.status = check_job_status(video.job_id)
+    video.transcode_status = check_job_status(video.transcoder_job_id)
     video.save()
 
-    if video.status == 'Complete':
+    if video.transcode_status == 'Complete':
         response: dict = extract_outputs(video.raw_file.name)
 
         video.outputs = response['outputs']

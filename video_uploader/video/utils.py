@@ -9,6 +9,9 @@ from botocore import UNSIGNED
 from botocore.client import Config
 from botocore.exceptions import ClientError
 
+OUTPUT_KEY_PREFIX = 'converted/'
+
+# PRESET_VAR: Tuple[str]
 PRESET_2M: Tuple[str] = ('1351620000001-200010', '2M')
 PRESET_1M: Tuple[str] = ('1351620000001-200030', '1M')
 PRESET_600K: Tuple[str] = ('1351620000001-200040', '600K')
@@ -51,10 +54,11 @@ def extract_outputs(input_filename: str) -> dict:
             return False
 
     def get_url(key):
-        return unsigned_s3.generate_preassigned_url(
-            "get_object",
+        # because bucket is public we do not need to sign the url
+        return unsigned_s3.generate_presigned_url(
+            ClientMethod="get_object",
             ExpiresIn=0,
-            Prams={
+            Params={
                 "Bucket": settings.OUTPUT_BUCKET_NAME,
                 "Key": key
             }
@@ -62,8 +66,8 @@ def extract_outputs(input_filename: str) -> dict:
 
     outputs = list()
     for preset_id, preset_name in PRESETS:
-        playlist = input_filename + preset_name + '.m3u8'
-        thumbnail = input_filename + preset_name + '-thumb-00001.png'
+        playlist = OUTPUT_KEY_PREFIX + input_filename + preset_name + '.m3u8'
+        thumbnail = OUTPUT_KEY_PREFIX + input_filename + preset_name + '-thumb-00001.png'
 
         if object_exists(playlist):
             playlist_url = get_url(playlist)
@@ -81,13 +85,15 @@ def extract_outputs(input_filename: str) -> dict:
             # but may occur when object is deleted manually from the bucket
             # or called before trancoding is complete
             # TODO: log this event
+            print(f"Playlist {playlist} not found")
             continue
 
     if outputs:
         thumbnail = outputs[0]['thumbnail']
     else:
-        thumbnail = None
+        thumbnail = ''
 
+    print(outputs)
     return {
         "outputs": outputs,
         "thumbnail": thumbnail
@@ -105,7 +111,7 @@ def check_job_status(job_id: str) -> str:
     """
     client = boto3.client('elastictranscoder')
     response: dict = client.read_job(Id=job_id)
-    return response['Status']
+    return response['Job']['Status']
 
 
 def create_transcode_job(input_filename: str) -> str:
@@ -128,7 +134,7 @@ def create_transcode_job(input_filename: str) -> str:
             'Interlaced': 'auto',
             'Container': 'auto',
         },
-        OutputKeyPrefix='converted/',
+        OutputKeyPrefix=OUTPUT_KEY_PREFIX,
         Outputs=[
             {
                 'Key': input_filename + preset_name,
