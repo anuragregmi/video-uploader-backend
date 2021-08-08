@@ -11,12 +11,13 @@ from botocore.exceptions import ClientError
 
 OUTPUT_KEY_PREFIX = 'converted/'
 
+# TODO: move these settings to env
 # PRESET_VAR: Tuple[str]
+PRESET_4M: Tuple[str] = ('1628424456465-hm0sj1', '4M')
 PRESET_2M: Tuple[str] = ('1351620000001-200010', '2M')
-PRESET_1M: Tuple[str] = ('1351620000001-200030', '1M')
 PRESET_600K: Tuple[str] = ('1351620000001-200040', '600K')
 
-PRESETS: list = [PRESET_600K, PRESET_1M, PRESET_2M]
+PRESETS: list = [PRESET_4M, PRESET_2M, PRESET_600K]
 
 def extract_outputs(input_filename: str) -> dict:
     """Generate outputs based on input_filename

@@ -5,7 +5,7 @@ from django_q.tasks import async_task
 
 class Video(models.Model):
     raw_file = models.FileField(validators=[FileExtensionValidator(
-        allowed_extensions=["mp4", "mov", "wmv", "webm"])])
+        allowed_extensions=["mp4", "mov", "wmv", "webm", "mkv"])])
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
     outputs = models.JSONField(null=True, blank=True)
