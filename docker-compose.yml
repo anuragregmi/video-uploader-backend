@@ -2,6 +2,8 @@ version: '3'
 services:
   postgres:
     image: postgres:11.6
+  redis:
+    image: redis
   web:
     restart: always
     environment:
@@ -17,6 +19,18 @@ services:
       - "8000:8000"
     depends_on:
       - postgres
+  q_cluster:
+    restart: always
+    environment:
+      - DJANGO_SECRET_KEY=local
+    build: ./
+    command: >
+      bash -c "python wait_for_postgres.py &&
+               ./manage.py q_cluster
+    volumes:
+      - ./:/code
+    depends_on:
+      - web
   documentation:
     restart: always
     build: ./
