@@ -11,7 +11,7 @@ class Video(models.Model):
     outputs = models.JSONField(null=True, blank=True)
     thumbnail = models.CharField(max_length=255, blank=True)
     transcoder_job_id = models.CharField(max_length=255, blank=True)
-    trancode_status = models.CharField(max_length=25, default="Pending")
+    transcode_status = models.CharField(max_length=25, default="Pending")
 
     def __str__(self):
         return self.raw_file.name

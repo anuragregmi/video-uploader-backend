@@ -23,7 +23,7 @@ def post_save_video(video: Video) -> None:
     video.transcoder_job_id = job_id
     video.save()
 
-    async_task('video_uploader.tasks.watch_transcode_job', video)
+    async_task('video_uploader.video.tasks.watch_transcode_job', video)
 
 
 def watch_transcode_job(video: Video) -> None:
@@ -49,13 +49,17 @@ def watch_transcode_job(video: Video) -> None:
         video.thumbnail = response['thumbnail']
         video.save()
 
-    elif video.status not in ['Canceled', 'Error']:
+    elif video.transcode_status not in ['Canceled', 'Error']:
         # schedule next check after 15s
         schedule(
-            'video_uploader.tasks.watch_transcode_job',
-            video,
+            'video_uploader.video.tasks.watch_transcode_job_given_video_id',
+            video.id,
             schedule_type=Schedule.MINUTES,
             minutes=1,
             repeats=1,
             next_run=timezone.now() + timezone.timedelta(seconds=15)
         )
+
+def watch_transcode_job_given_video_id(video_id: int):
+    video = Video.objects.get(id=video_id)
+    watch_transcode_job(video)
