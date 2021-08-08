@@ -5,8 +5,7 @@ from django_q.tasks import async_task, schedule, Schedule
 
 
 from video_uploader.video.models import Video
-from video_uploader.video.utils import create_transcode_job, extract_outputs,\
-    upload_file, check_job_status
+from video_uploader.video import utils
 
 
 def post_save_video(video: Video) -> None:
@@ -17,8 +16,8 @@ def post_save_video(video: Video) -> None:
     Args:
         video: Video Instance
     """
-    upload_file(video.raw_file, settings.INPUT_BUCKET_NAME, video.raw_file.name)
-    job_id: str = create_transcode_job(video.raw_file.name)
+    utils.upload_file(video.raw_file, settings.INPUT_BUCKET_NAME, video.raw_file.name)
+    job_id: str = utils.create_transcode_job(video.raw_file.name)
 
     video.transcoder_job_id = job_id
     video.save()
@@ -39,11 +38,11 @@ def watch_transcode_job(video: Video) -> None:
     if not video.transcoder_job_id:
         raise AssertionError("Video.transcoder_job_id not set")
 
-    video.transcode_status = check_job_status(video.transcoder_job_id)
+    video.transcode_status = utils.check_job_status(video.transcoder_job_id)
     video.save()
 
     if video.transcode_status == 'Complete':
-        response: dict = extract_outputs(video.raw_file.name)
+        response: dict = utils.extract_outputs(video.raw_file.name)
 
         video.outputs = response['outputs']
         video.thumbnail = response['thumbnail']

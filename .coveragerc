@@ -1,9 +1,13 @@
 [run]
 branch = True
+
+[report]
 omit = *migrations*,
        *urls*,
        *test*,
        *admin*,
+       *media*,
+       *venv*,
        ./manage.py,
        ./video_uploader/config/*,
        ./video_uploader/wsgi.py,
