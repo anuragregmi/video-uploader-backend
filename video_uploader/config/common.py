@@ -207,22 +207,9 @@ class Common(Configuration):
     WATERMARK_FILE_NAME = values.Value(default="level_up_logo.png", environ_prefix="S3")
     PIPELINE_ID = values.Value(default="", environ_prefix="TRANSCODE")
 
-    Q_CLUSTER = {
-        'name': 'myproject',
-        'workers': 8,
-        'recycle': 500,
-        'timeout': 60*60,
-        'retry': 60*60 + 5,
-        'compress': True,
-        'save_limit': 250,
-        'queue_limit': 500,
-        'cpu_affinity': 1,
-        'label': 'Django Q',
-        'redis': {
-            'host': '127.0.0.1',
-            'port': 6379,
-            'db': 0, }
-    }
+    REDIS_HOST = values.Value(default="redis")
+
+    Q_CLUSTER_SYNC = values.BooleanValue(default=False)
 
     TIME_ZONE = "Asia/Kathmandu"
 
@@ -233,4 +220,25 @@ class Common(Configuration):
                 default='postgres://postgres:@postgres:5432/postgres',
                 conn_max_age=int(os.getenv('POSTGRES_CONN_MAX_AGE', 600))
             )
+        }
+
+    @property
+    def Q_CLUSTER(self):
+        return {
+            'name': 'myproject',
+            'workers': 8,
+            'recycle': 500,
+            'timeout': 60*60,
+            'retry': 60*60 + 5,
+            'compress': True,
+            'save_limit': 250,
+            'queue_limit': 500,
+            'cpu_affinity': 1,
+            'label': 'Django Q',
+            'redis': {
+                'host': self.REDIS_HOST,
+                'port': 6379,
+                'db': 0,
+            },
+            'sync': self.Q_CLUSTER_SYNC
         }
