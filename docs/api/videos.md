@@ -34,7 +34,7 @@ Content-Type application/json
 
 ```json
 Content-Type application/json
-201 Created
+200 Ok
 
 {
     "count": 1,
