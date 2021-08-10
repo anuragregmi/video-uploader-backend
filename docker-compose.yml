@@ -2,6 +2,8 @@ version: '3'
 services:
   postgres:
     image: postgres:11.6
+    volumes:
+      - video-uploader-postgres-data:/var/lib/postgresql
   redis:
     image: redis
   web:
@@ -15,6 +17,7 @@ services:
                ./manage.py runserver 0.0.0.0:8000"
     volumes:
       - ./:/code
+      - ~/.aws:/root/.aws
     ports:
       - "8000:8000"
     depends_on:
@@ -30,6 +33,7 @@ services:
                ./manage.py qcluster"
     volumes:
       - ./:/code
+      - ~/.aws:/root/.aws
     depends_on:
       - web
   documentation:
@@ -40,3 +44,6 @@ services:
       - ./:/code
     ports:
       - "8001:8001"
+
+volumes:
+  video-uploader-postgres-data:
