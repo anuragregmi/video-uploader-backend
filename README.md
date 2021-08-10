@@ -2,7 +2,7 @@
 ![example workflow](https://github.com/anuragregmi/video-uploader-backend/actions/workflows/test.yml/badge.svg)
 [![Built with](https://img.shields.io/badge/Built_with-Cookiecutter_Django_Rest-F7B633.svg)](https://github.com/agconti/cookiecutter-django-rest)
 
-Video Upload an. Check out the project's [documentation](http://anuragregmi.github.io/video_uploader-backend/).
+Video Upload an. Check out the project's [documentation](http://anuragregmi.github.io/video-uploader-backend/).
 
 # Prerequisites
 
