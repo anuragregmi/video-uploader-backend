@@ -3,7 +3,7 @@ services:
   postgres:
     image: postgres:11.6
     volumes:
-      - video-uploader-postgres-data:/var/lib/postgresql
+      - video-uploader-postgres-data:/var/lib/postgresql/data
   redis:
     image: redis
   web:
