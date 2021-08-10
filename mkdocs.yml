@@ -1,6 +1,6 @@
-site_name: video_uploader
+site_name: video-uploader
 site_description: Video Upload an
-repo_url: https://github.com/anuragregmi/video_uploader-backend
+repo_url: https://github.com/anuragregmi/video-uploader-backend
 site_dir: site
 copyright: Copyright &copy; 2020, <a href="https://github.com/anuragregmi">anuragregmi</a>.
 dev_addr: 0.0.0.0:8001
@@ -10,3 +10,4 @@ nav:
   - API:
     - Authentication: 'api/authentication.md'
     - Users: 'api/users.md'
+    - Videos: 'api/videos.md'
